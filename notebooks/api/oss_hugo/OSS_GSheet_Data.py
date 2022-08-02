@@ -41,8 +41,7 @@ class OSS_GSheet_Data:
         return df
 
     def df_participants_remote(self):
-        df = pd.DataFrame(self.data_participants_remote())
-        return df
+        return pd.DataFrame(self.data_participants_remote())
 
     def qgrid_participants_onsite(self,reload=False):
         df_onsite = self.df_participants_onsite(reload)

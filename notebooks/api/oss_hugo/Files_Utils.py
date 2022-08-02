@@ -6,7 +6,5 @@ class Files_Utils:
         import os
         files = []
         for r, d, f in os.walk(path):
-            for file in f:
-                if extension in file:
-                    files.append(os.path.join(r, file))
+            files.extend(os.path.join(r, file) for file in f if extension in file)
         return files

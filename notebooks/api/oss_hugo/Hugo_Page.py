@@ -29,7 +29,7 @@ class Hugo_Page():
         if Files.exists(name):
             full_path = name
         else:
-            virtual_path = "{0}/{1}".format(self.base_folder, self.fix_name(name) + '.md')
+            virtual_path = "{0}/{1}".format(self.base_folder, f'{self.fix_name(name)}.md')
             full_path = self.md_file_path(virtual_path)
         if Files.exists(full_path) is False:
             return False
@@ -45,16 +45,20 @@ class Hugo_Page():
 
     def find_in_md_files(self, name):
         target_file = "{0}.md".format(self.fix_name(name))
-        for md_file in self.all_md_files():
-            if Files.file_name(md_file) == target_file:
-                return md_file
-        return None
+        return next(
+            (
+                md_file
+                for md_file in self.all_md_files()
+                if Files.file_name(md_file) == target_file
+            ),
+            None,
+        )
 
     def fix_name(self, name):
         return name.replace(' ','-').lower()
 
     def md_file_path(self, virtual_path:str):
-        if virtual_path.startswith('/'): virtual_path = virtual_path[1:]
+        virtual_path = virtual_path.removeprefix('/')
         return Files.path_combine(self.folder_oss,virtual_path)
 
     def load(self, path):
@@ -62,8 +66,12 @@ class Hugo_Page():
             try:
                 file_data     = frontmatter.load(path)
                 relative_path = path.replace(self.folder_oss,'')
-                data = { 'path': relative_path , 'content': file_data.content, 'metadata': file_data.metadata }
-                return data
+                return {
+                    'path': relative_path,
+                    'content': file_data.content,
+                    'metadata': file_data.metadata,
+                }
+
             except Exception as error:
                 print('[Hugo_Page][load] for {0} error: {1}'.format(path,error))
                 
@@ -74,7 +82,7 @@ class Hugo_Page():
             post.metadata     = data.get('metadata')
             for key, value in post.metadata.items():
                 default_value = '' if key not in ['sessions'] else []
-                post.metadata[key] = value if value else default_value
+                post.metadata[key] = value or default_value
 
             file_path = self.md_file_path(data['path'] )
 

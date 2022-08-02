@@ -30,8 +30,7 @@ class API_Hugo_OSS:
     def load_files(self,paths,index_by_title=False):
         results = {}
         for path in paths:
-            data = Hugo_Page().load(path)
-            if data:
+            if data := Hugo_Page().load(path):
                 if index_by_title:
                     results[data.get('metadata').get('title')] = data
                 else:

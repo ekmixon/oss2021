@@ -51,9 +51,11 @@ class OSS_Schedule:
             for session in sessions:
                 if results.get(session) is None: results[session] = []
                 results[session].append(title)
-        mappings = []
-        for key, value in results.items():
-            mappings.append({'title': key, 'participants': value, 'participants_count': len(value)})
+        mappings = [
+            {'title': key, 'participants': value, 'participants_count': len(value)}
+            for key, value in results.items()
+        ]
+
         df_mappings = pd.DataFrame(mappings)
         df_mappings =  df_mappings[['title', 'participants_count', 'participants']].sort_values(['participants_count'], ascending=False)
         return df_mappings

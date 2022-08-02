@@ -40,20 +40,15 @@ class OSS_Participant:
         return Files.exists(self.path_md_file)
 
     def field(self, key, value=None):
-        metadata = self.metadata()
-        if metadata:
-            if value is not None:
-                metadata[key] = value
-                return self
-            else:
+        if metadata := self.metadata():
+            if value is None:
                 return metadata.get(key)
+            metadata[key] = value
+            return self
         return None
 
     def fields(self):
-        metadata = self.metadata()
-        if metadata:
-            return list(set(self.metadata()))
-        return []
+        return list(set(self.metadata())) if (metadata := self.metadata()) else []
 
     def load(self,reload=False):
         if self.data is None or reload:
@@ -62,22 +57,19 @@ class OSS_Participant:
                 self.path_md_file = path
             else:
                 if '.md' not in path:
-                    path = self.hugo_page.fix_name(path) + '.md'
+                    path = f'{self.hugo_page.fix_name(path)}.md'
                 if self.name.startswith(self.base_folder) is False:     # fix path
                     path = self.base_folder + path
                 self.path_md_file = self.hugo_page.md_file_path(path)
             if Files.not_exists(self.path_md_file):
                 self.path_md_file = self.hugo_page.find_in_md_files(self.name)
             self.data = self.hugo_page.load(self.path_md_file)
-            title = self.field('title')
-            if title:
+            if title := self.field('title'):
                 self.name = title
         return self
 
     def metadata(self):
-        if self.data:
-            return self.data.get('metadata')
-        return None
+        return self.data.get('metadata') if self.data else None
 
     def save(self):
         self.hugo_page.save(self.data)

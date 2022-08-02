@@ -24,4 +24,4 @@ class RuamlYAMLHandler(BaseHandler):
         kwargs.setdefault('allow_unicode', True)
 
         metadata = yaml.dump(metadata, **kwargs).strip()
-return u(metadata) # ensure unicode
+pass
