@@ -3,3 +3,4 @@ ipympl
 python-frontmatter
 qgrid
 pbx_gs_python_utils
+ipython>=8.10.0 # not directly required, pinned by Snyk to avoid a vulnerability
